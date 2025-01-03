@@ -194,40 +194,36 @@ function generateDay(day, date) {
     });
 }
 
-function prependWeek()
-{
+function prependWeek() {
     var week = calendarTableElement.insertRow(0);
     var monthName = '';
 
     // move firstDate to the beginning of the previous week assuming it is already at the beginning of a week
-    do
-    {
+    do {
         firstDate.setDate(firstDate.getDate() - 1);
-        if(firstDate.getDate() == 1) monthName = months[firstDate.getMonth()] + '<br />' + firstDate.getFullYear();
+        if (firstDate.getDate() == 1) monthName = months[firstDate.getMonth()] + '<br />' + firstDate.getFullYear();
 
         var day = week.insertCell(0);
         generateDay(day, firstDate);
-    } while(firstDate.getDay() != 0);
+    } while (firstDate.getDay() != 1);
 
     var extra = week.insertCell(-1);
     extra.className = 'extra';
     extra.innerHTML = monthName;
 }
 
-function appendWeek()
-{
+function appendWeek() {
     var week = calendarTableElement.insertRow(-1);
     var monthName = '';
 
     // move lastDate to the end of the next week assuming it is already at the end of a week
-    do
-    {
+    do {
         lastDate.setDate(lastDate.getDate() + 1);
-        if(lastDate.getDate() == 1) monthName = months[lastDate.getMonth()] + '<br />' + lastDate.getFullYear();
+        if (lastDate.getDate() == 1) monthName = months[lastDate.getMonth()] + '<br />' + lastDate.getFullYear();
 
         var day = week.insertCell(-1);
         generateDay(day, lastDate);
-    } while(lastDate.getDay() != 6)
+    } while (lastDate.getDay() != 0);
 
     var extra = week.insertCell(-1);
     extra.className = 'extra';
@@ -328,13 +324,14 @@ function poll()
     }
 }
 
-function loadCalendarAroundDate(seedDate)
-{
+function loadCalendarAroundDate(seedDate) {
     calendarTableElement.innerHTML = '';
     firstDate = new Date(seedDate);
 
-    // move firstDate to the beginning of the week
-    while(firstDate.getDay() != 0) firstDate.setDate(firstDate.getDate() - 1);
+    // move firstDate to the beginning of the week (Monday)
+    while (firstDate.getDay() != 1) {
+        firstDate.setDate(firstDate.getDate() - 1);
+    }
 
     // set lastDate to the day before firstDate
     lastDate = new Date(firstDate);
@@ -344,8 +341,7 @@ function loadCalendarAroundDate(seedDate)
     appendWeek();
 
     // fill up the entire window with weeks
-    while(documentScrollHeight() <= window.innerHeight)
-    {
+    while (documentScrollHeight() <= window.innerHeight) {
         prependWeek();
         appendWeek();
     }
@@ -369,6 +365,11 @@ window.onload = function()
 function showHelp() { document.getElementById('help').style.display = 'block'; }
 function hideHelp() { document.getElementById('help').style.display = 'none'; }
 
+// Create header
 document.write('<div id="header"><a class="button" href="javascript:smoothScrollToToday()">Scroll to today</a><a class="button" href="javascript:showHelp()">Help</a>&nbsp; by <a href="..">Evan Wallace</a></div>');
-document.write('<table id="calendar"></table>');
+
+// Create container for color picker and calendar
+document.write('<div id="container"><div id="colorPickerContainer"></div><table id="calendar"></table></div>');
+
+// Create help section
 document.write('<div id="help"><div><ul><li>Click on a day to add a note</li><li>To delete a note, delete its text</li><li>Use the scroll wheel to move forward or backward in time</li><li>If you write ESAME the cell becomes red to highlight the date</li></ul><a class="button" href="javascript:hideHelp()">Close</a></div></div>');
